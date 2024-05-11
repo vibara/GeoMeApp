@@ -7,6 +7,6 @@ namespace GeoMeApp.Data
     {
         [Key]
         public int Id { get; set; }
-        public ICollection<PassedLocation> PassedLocations { get; set; } = null;
+        public ICollection<PassedLocation>? PassedLocations { get; set; } = null;
     }
 }
