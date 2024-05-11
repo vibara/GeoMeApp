@@ -8,25 +8,26 @@ namespace GeoMeApp.Services
 {
     internal class LocationService : ILocationService
     {
-        public Location? Location { get; private set; }
+
+        private Location? Location { get; set; }
         public double LocationUpdateSeconds { get; set; } = 5;
         private CancellationTokenSource? _cancelTokenSource;
         private bool _isCheckingLocation;
         private Timer? _locationUpdateTimer;
 
-        private LocationService()
+        public Location? GetLocation()
         {
-
+            return Location;
         }
+
         protected async void RequestLocation(object state)
         {
             try
             {
                 _isCheckingLocation = true;
                 var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
-
                 _cancelTokenSource = new CancellationTokenSource();
-                Location = await Geolocation.Default.GetLastKnownLocationAsync();
+                Location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
             }
             catch (FeatureNotSupportedException fnsEx)
             {
@@ -56,16 +57,15 @@ namespace GeoMeApp.Services
             {
                 _cancelTokenSource.Cancel();
             }
-
         }
 
-        protected void StartLocationUpdates()
+        public void StartLocationUpdates()
         {
-            StopLocatopnUpdates();
+            StopLocationUpdates();
             _locationUpdateTimer = new Timer(RequestLocation, null, TimeSpan.Zero, TimeSpan.FromSeconds(LocationUpdateSeconds));
         }
 
-        protected void StopLocatopnUpdates()
+        public void StopLocationUpdates()
         {
             if (_locationUpdateTimer != null)
             {
@@ -73,11 +73,13 @@ namespace GeoMeApp.Services
                 _locationUpdateTimer = null;
             }
         }
-        protected void OnSleep()
+
+        public void OnSleep()
         {
-            StopLocatopnUpdates();
+            StopLocationUpdates();
         }
-        protected void OnResume()
+
+        public void OnResume()
         {
             StartLocationUpdates();
         }
