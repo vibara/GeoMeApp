@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using GeoMeApp.Services;
+using Microsoft.Extensions.Logging;
 
 namespace GeoMeApp
 {
@@ -19,6 +20,7 @@ namespace GeoMeApp
     		builder.Logging.AddDebug();
 #endif
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
+            builder.Services.AddSingleton<ILocationService, LocationService>();
             return builder.Build();
         }
     }
