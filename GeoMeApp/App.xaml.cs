@@ -15,10 +15,5 @@ public partial class App : Application
         DataFilePath = Path.Combine(FileSystem.Current.AppDataDirectory, DataFileName);
         Services = provider;
         MainPage = new AppShell();
-        var _locationService = Services.GetService<ILocationService>();
-        if (_locationService != null )
-        {
-            _locationService.StartLocationUpdates();
-        }
     }
 }

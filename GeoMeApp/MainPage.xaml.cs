@@ -5,15 +5,15 @@ namespace GeoMeApp
     public partial class MainPage : ContentPage
     {
         public double ControlUpdateSeconds { get; private set; } = 5;
-        const string NoInfoAboutLocation = "...";
-        private App _app = Application.Current as App;
-        private ILocationService? _locationService;
+        private const string NoInfoAboutLocation = "...";
+        private readonly App _app = Application.Current as App;
+        private readonly ILocationService? _locationService;
         private Timer? _updateTimer;
 
         public MainPage()
         {
             InitializeComponent();
-            _locationService = Application.Current.Handler.MauiContext?.Services.GetService<ILocationService>();
+            _locationService = _app.Handler.MauiContext?.Services.GetService<ILocationService>();
             StartUpdateTimer();
         }
 
@@ -29,13 +29,11 @@ namespace GeoMeApp
                 var location = _locationService?.GetLocation();
                 if (location != null) 
                 {
-                    LatValue.Text = $"{location.Latitude:F3}";
-                    LongValue.Text = $"{location.Longitude:F3}";
+                    Coordinates.Text = $"Lat: {location.Latitude:F4}  Long: {location.Longitude:F4}";
                 }
                 else
                 {
-                    LatValue.Text = NoInfoAboutLocation;
-                    LongValue.Text = NoInfoAboutLocation;
+                    Coordinates.Text = NoInfoAboutLocation;
                 }
             });
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,14 +14,15 @@ namespace GeoMeApp.Services
         public double LocationUpdateSeconds { get; set; } = 5;
         private CancellationTokenSource? _cancelTokenSource;
         private bool _isCheckingLocation;
-        private Timer? _locationUpdateTimer;
 
         public Location? GetLocation()
         {
+            Task<Location?> lastLocation = RequestLocation();
+            lastLocation.ConfigureAwait(false);
             return Location;
         }
 
-        protected async void RequestLocation(object state)
+        protected async Task<Location?> RequestLocation()
         {
             try
             {
@@ -31,24 +33,25 @@ namespace GeoMeApp.Services
             }
             catch (FeatureNotSupportedException fnsEx)
             {
-                // Handle not supported on device exception
+                Debug.Print($"Request location: Feature not supported, message: {fnsEx.Message}");                
             }
             catch (FeatureNotEnabledException fneEx)
             {
-                // Handle not enabled on device exception
+                Debug.Print($"Request location: Feature not enabled, message: {fneEx.Message}");
             }
             catch (PermissionException pEx)
             {
-                // Handle permission exception
+                Debug.Print($"Request location: Permission exception: {pEx.Message}");
             }
             catch (Exception ex)
             {
-                // Unable to get location
+                Debug.Print($"Request location: General exception: {ex.Message}");
             }
             finally
             {
                 _cancelTokenSource?.Cancel();
             }
+            return Location;
         }
 
         protected void CancelLocationRequest()
@@ -57,31 +60,6 @@ namespace GeoMeApp.Services
             {
                 _cancelTokenSource.Cancel();
             }
-        }
-
-        public void StartLocationUpdates()
-        {
-            StopLocationUpdates();
-            _locationUpdateTimer = new Timer(RequestLocation, null, TimeSpan.Zero, TimeSpan.FromSeconds(LocationUpdateSeconds));
-        }
-
-        public void StopLocationUpdates()
-        {
-            if (_locationUpdateTimer != null)
-            {
-                _locationUpdateTimer?.Dispose();
-                _locationUpdateTimer = null;
-            }
-        }
-
-        public void OnSleep()
-        {
-            StopLocationUpdates();
-        }
-
-        public void OnResume()
-        {
-            StartLocationUpdates();
         }
     }
 }
