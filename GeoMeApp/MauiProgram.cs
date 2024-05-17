@@ -1,5 +1,7 @@
 ﻿using GeoMeApp.Services;
 using Microsoft.Extensions.Logging;
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Maps;
 
 namespace GeoMeApp
 {
@@ -15,7 +17,8 @@ namespace GeoMeApp
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-                .UseMauiMaps();
+                .UseMauiMaps()
+                .UseMauiCommunityToolkitMaps(""); // https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
 
 #if DEBUG
             builder.Logging.AddDebug();
