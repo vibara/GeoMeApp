@@ -12,11 +12,22 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <maps:Map x:Name="Map" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" IsShowingUser="True" IsScrollEnabled="True" IsZoomEnabled="True" />
-        <Label Text="Footprints:" Grid.Row="1" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-        <Switch x:Name="Track" Grid.Row="1" Grid.Column="0" WidthRequest="100"  HeightRequest="40" Margin="10,10,10,10" HorizontalOptions="End"/>
-        <Label x:Name="Coordinates" Text="" Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="Start" HorizontalOptions="Start" VerticalTextAlignment="Center"/>
+        <maps:Map x:Name="Map" 
+                  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
+                  IsShowingUser="True" IsScrollEnabled="True" IsZoomEnabled="True" />
+        <Label Text="Footprint"  
+               Grid.Row="1" Grid.Column="0" 
+               VerticalOptions="Center" 
+               HorizontalTextAlignment="End" HorizontalOptions="End" />
+        <Switch x:Name="Track"  
+                Grid.Row="1" Grid.Column="1" 
+                HeightRequest="40" Margin="10,10,10,10" 
+                HorizontalOptions="Start" VerticalOptions="Center" />
+        <Label x:Name="Coordinates" Text="" 
+               Grid.Row="1" Grid.Column="2" 
+               HorizontalTextAlignment="Start" HorizontalOptions="Start" VerticalTextAlignment="Center"/>
     </Grid>
 </ContentPage>
