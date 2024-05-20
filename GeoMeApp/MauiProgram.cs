@@ -21,31 +21,36 @@ namespace GeoMeApp
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
                 .UseMauiMaps();
-
-            /* adding appsettings.json with passwords */
-            var assembly = Assembly.GetExecutingAssembly();
-            using var stream = assembly.GetManifestResourceStream("GeoMeApp.appsettings.json");
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddJsonStream(stream)
-                .Build();
-#if WINDOWS
-            string keyMauiCommunityToolkit = configuration["AppSettings:BingMaps_Key"] ?? string.Empty;
-#elif ANDROID 
-            string keyAndroidGeoApiKey = configuration["AppSettings:Android_GeoApi_Key"] ?? string.Empty;
-            MetadataHelper.SetMetaDataValue("com.google.android.geo.API_KEY", keyAndroidGeoApiKey);
-#endif
-#if WINDOWS
-            builder.UseMauiCommunityToolkitMaps(keyMauiCommunityToolkit); // https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
-#endif
-            builder.Configuration.AddConfiguration(configuration);
-
-
+            AddConfiguration(builder);
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
             builder.Services.AddSingleton<ILocationService, LocationService>();
             return builder.Build();
+        }
+
+        private static void AddConfiguration(MauiAppBuilder builder)
+        {
+            /* adding appsettings.json with passwords */
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("GeoMeApp.appsettings.json");
+            if (stream != null)
+            {
+                IConfiguration configuration = new ConfigurationBuilder()
+                    .AddJsonStream(stream)
+                    .Build();
+#if WINDOWS
+                string keyMauiCommunityToolkit = configuration["AppSettings:BingMaps_Key"] ?? string.Empty;
+#elif ANDROID
+                string keyAndroidGeoApiKey = configuration["AppSettings:Android_GeoApi_Key"] ?? string.Empty;
+                MetadataHelper.SetMetaDataValue("com.google.android.geo.API_KEY", keyAndroidGeoApiKey);
+#endif
+#if WINDOWS
+                builder.UseMauiCommunityToolkitMaps(keyMauiCommunityToolkit); // https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
+#endif
+                builder.Configuration.AddConfiguration(configuration);
+            }
         }
     }
 }
