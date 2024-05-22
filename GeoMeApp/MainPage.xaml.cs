@@ -1,4 +1,5 @@
 ﻿using GeoMeApp.Services;
+using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 
 namespace GeoMeApp
@@ -11,11 +12,17 @@ namespace GeoMeApp
         private readonly ILocationService? _locationService;
         private Timer? _updateTimer;
         private bool _initialCentering = true;
+        private Polyline _myTrack = new Polyline   // To refactor
+        {
+            StrokeColor = Color.FromArgb("#FF0000"),
+            StrokeWidth = 5
+        };
 
         public MainPage()
         {
             InitializeComponent();
             _locationService = _app.Handler.MauiContext?.Services.GetService<ILocationService>();
+            Map.MapElements.Add(_myTrack);
             StartUpdateTimer();
         }
 
@@ -38,6 +45,7 @@ namespace GeoMeApp
                         Map.MoveToRegion(mapSpan);
                         _initialCentering = false;
                     }
+                    _myTrack.Add(location);
                 }
                 else
                 {
