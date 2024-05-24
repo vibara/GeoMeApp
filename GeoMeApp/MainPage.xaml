@@ -24,6 +24,7 @@
                HorizontalTextAlignment="End" HorizontalOptions="End" />
         <Switch x:Name="Track"  
                 Grid.Row="1" Grid.Column="1" 
+                Toggled="Track_Toggled"
                 HeightRequest="40" Margin="10,10,10,10" 
                 HorizontalOptions="Start" VerticalOptions="Center" />
         <Label x:Name="Coordinates" Text="" 

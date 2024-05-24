@@ -1,6 +1,7 @@
 ﻿using GeoMeApp.Services;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
+using System.Diagnostics;
 
 namespace GeoMeApp
 {
@@ -12,6 +13,7 @@ namespace GeoMeApp
         private readonly ILocationService? _locationService;
         private Timer? _updateTimer;
         private bool _initialCentering = true;
+        private bool _polylineDrawing = false;
         private Polyline _myTrack = new Polyline   // To refactor
         {
             StrokeColor = Color.FromArgb("#FF0000"),
@@ -45,7 +47,15 @@ namespace GeoMeApp
                         Map.MoveToRegion(mapSpan);
                         _initialCentering = false;
                     }
-                    _myTrack.Add(location);
+                    if (!_initialCentering && _polylineDrawing)
+                    {
+                        Map.MapElements.Clear();
+                        if (_myTrack.Count == 0 || (_myTrack.First().Latitude != location.Latitude || _myTrack.First().Longitude != location.Longitude)) 
+                        {
+                            _myTrack.Add(location);
+                        }
+                        Map.MapElements.Add(_myTrack);
+                    }
                 }
                 else
                 {
@@ -58,6 +68,20 @@ namespace GeoMeApp
         {
             base.OnDisappearing();
             _updateTimer?.Dispose();
+        }
+
+        private void Track_Toggled(object sender, ToggledEventArgs e)
+        {
+            if (e.Value)
+            {
+                _polylineDrawing = true;
+            }
+            else
+            {
+                _polylineDrawing = false;
+                Map.MapElements.Clear();
+                _myTrack.Clear();
+            }
         }
     }
 
