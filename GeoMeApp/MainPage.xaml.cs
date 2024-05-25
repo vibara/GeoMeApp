@@ -24,7 +24,6 @@ namespace GeoMeApp
         {
             InitializeComponent();
             _locationService = _app.Handler.MauiContext?.Services.GetService<ILocationService>();
-            Map.MapElements.Add(_myTrack);
             StartUpdateTimer();
         }
 
@@ -52,7 +51,7 @@ namespace GeoMeApp
                         Map.MapElements.Clear();
                         if (_myTrack.Count == 0 || (_myTrack.First().Latitude != location.Latitude || _myTrack.First().Longitude != location.Longitude)) 
                         {
-                            _myTrack.Add(location);
+                            _myTrack.Geopath.Add(location);
                         }
                         Map.MapElements.Add(_myTrack);
                     }
