@@ -13,10 +13,28 @@ namespace GeoMeApp.Data
     {
         public DbSet<Trip> Trips { get; set; } = null!;
         public DbSet<PassedLocation> PassedLocations { get; set; } = null!;
+        private string _dataFilePath;
+
+        public DataContext(string dataFilePath)
+        {
+            _dataFilePath = dataFilePath;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
+
+
+        }
+        
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite(ConnectionString);
+        }
+
+        private string ConnectionString
+        {
+            get { return $"Data Source={_dataFilePath}"; }
         }
     }
 }

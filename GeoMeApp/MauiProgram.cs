@@ -10,6 +10,10 @@ namespace GeoMeApp
 {
     public static class MauiProgram
     {
+
+        private const string DataFileName = "GeoMeData.db";
+        public static string DataFilePath { get; private set; } = Path.Combine(FileSystem.Current.AppDataDirectory, DataFileName);
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -27,6 +31,8 @@ namespace GeoMeApp
 #endif
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
             builder.Services.AddSingleton<ILocationService, LocationService>();
+            builder.Services.AddSingleton<IDatabaseService>(
+                provider => new DatabaseService(DataFilePath) );
             return builder.Build();
         }
 

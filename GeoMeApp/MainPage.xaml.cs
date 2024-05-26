@@ -27,12 +27,12 @@ namespace GeoMeApp
             StartUpdateTimer();
         }
 
-        void StartUpdateTimer()
+        private void StartUpdateTimer()
         {
             _updateTimer = new Timer(UpdateControls, null, TimeSpan.Zero, TimeSpan.FromSeconds(ControlUpdateSeconds));
         }
 
-        void UpdateControls(object state)
+        private void UpdateControls(object state)
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -49,11 +49,10 @@ namespace GeoMeApp
                     if (!_initialCentering && _polylineDrawing)
                     {
                         Map.MapElements.Clear();
-                        if (_myTrack.Count == 0 || (_myTrack.First().Latitude != location.Latitude || _myTrack.First().Longitude != location.Longitude)) 
+                        if (_myTrack.Count == 0 || (_myTrack.Last().Latitude != location.Latitude || _myTrack.Last().Longitude != location.Longitude)) 
                         {
                             _myTrack.Geopath.Add(location);
                         }
-                        Map.MapElements.Add(_myTrack);
                     }
                 }
                 else
