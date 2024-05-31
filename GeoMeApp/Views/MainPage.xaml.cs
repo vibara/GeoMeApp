@@ -27,7 +27,6 @@ namespace GeoMeApp.Views
             InitializeComponent();
             _locationService = _app?.Handler.MauiContext?.Services.GetService<ILocationService>();
             _databaseService = _app?.Handler.MauiContext?.Services.GetService<IDatabaseService>();
-            Map.IsVisible = false;
             if (_databaseService != null ) {
                 var locations = _databaseService.GetLocations();
                 foreach (var location in locations )
@@ -57,7 +56,6 @@ namespace GeoMeApp.Views
                         MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(0.444));
                         Map.MoveToRegion(mapSpan);
                         _initialCentering = false;
-                        Map.IsVisible = true;
                         Map.MapElements.Add(_myTrack);
                     }
                     if (!_initialCentering && _polylineDrawing)
