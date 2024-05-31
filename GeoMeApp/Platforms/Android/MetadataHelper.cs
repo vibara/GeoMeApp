@@ -9,8 +9,8 @@ namespace GeoMeApp
         {
             try
             {
-                ApplicationInfo appInfo = Android.App.Application.Context.PackageManager.GetApplicationInfo(Android.App.Application.Context.PackageName, PackageInfoFlags.MetaData);
-                appInfo.MetaData.PutString(key, value);
+                ApplicationInfo appInfo = Android.App.Application.Context.PackageManager?.GetApplicationInfo(Android.App.Application.Context.PackageName, PackageInfoFlags.MetaData);
+                appInfo?.MetaData?.PutString(key, value);
             }
             catch (Exception ex)
             {

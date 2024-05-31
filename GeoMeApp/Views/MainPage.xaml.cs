@@ -3,17 +3,19 @@ using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Diagnostics;
 
-namespace GeoMeApp
+namespace GeoMeApp.Views
 {
     public partial class MainPage : ContentPage
     {
-        public double ControlUpdateSeconds { get; private set; } = 5;
+        public double ControlUpdateSeconds { get; private set; } = 10;
         private const string NoInfoAboutLocation = "...";
         private readonly App _app = Application.Current as App;
         private readonly ILocationService? _locationService;
         private Timer? _updateTimer;
         private bool _initialCentering = true;
         private bool _polylineDrawing = false;
+        private readonly IDatabaseService _databaseService;
+
         private Polyline _myTrack = new Polyline   // To refactor
         {
             StrokeColor = Color.FromArgb("#FF0000"),
@@ -24,6 +26,16 @@ namespace GeoMeApp
         {
             InitializeComponent();
             _locationService = _app.Handler.MauiContext?.Services.GetService<ILocationService>();
+            _databaseService = _app.Handler.MauiContext?.Services.GetService<IDatabaseService>();
+            if (_databaseService != null ) {
+                var locations = _databaseService.GetLocations();
+
+                foreach (var location in locations )
+                {
+                    _myTrack.Geopath.Add(location);
+                }
+                // ((List<Location>)_myTrack.Geopath).AddRange(locations); ? What's wrong?
+            }
             StartUpdateTimer();
         }
 
@@ -37,7 +49,7 @@ namespace GeoMeApp
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 var location = _locationService?.GetLocation();
-                if (location != null) 
+                if (location != null)
                 {
                     Coordinates.Text = $"Lat: {location.Latitude:F4}  Long: {location.Longitude:F4}";
                     if (_initialCentering)
@@ -48,10 +60,12 @@ namespace GeoMeApp
                     }
                     if (!_initialCentering && _polylineDrawing)
                     {
-                        Map.MapElements.Clear();
-                        if (_myTrack.Count == 0 || (_myTrack.Last().Latitude != location.Latitude || _myTrack.Last().Longitude != location.Longitude)) 
+                        if (_myTrack.Geopath.Count == 0 || 
+                            _myTrack.Geopath.Last().Latitude != location.Latitude || 
+                            _myTrack.Geopath.Last().Longitude != location.Longitude)
                         {
                             _myTrack.Geopath.Add(location);
+                            _databaseService.AddLocation(location, DateTime.Now);   
                         }
                     }
                 }
@@ -77,8 +91,6 @@ namespace GeoMeApp
             else
             {
                 _polylineDrawing = false;
-                Map.MapElements.Clear();
-                _myTrack.Clear();
             }
         }
     }

@@ -12,7 +12,7 @@ namespace GeoMeApp
     {
 
         private const string DataFileName = "GeoMeData.db";
-        public static string DataFilePath { get; private set; } = Path.Combine(FileSystem.Current.AppDataDirectory, DataFileName);
+        public static string DataFilePath { get; private set; } = Path.Combine(FileSystem.Current.AppDataDirectory, DataFileName); // example: GeoMeData "/data/user/0/com.companyname.geomeapp/files/GeoMeData.db"
 
         public static MauiApp CreateMauiApp()
         {
@@ -58,5 +58,7 @@ namespace GeoMeApp
                 builder.Configuration.AddConfiguration(configuration);
             }
         }
+
+
     }
 }

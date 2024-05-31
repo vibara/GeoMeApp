@@ -6,35 +6,36 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
+namespace GeoMeApp.Data;
 
-namespace GeoMeApp.Data
+public class DataContext : DbContext
 {
-    internal class DataContext : DbContext
+    public DbSet<PassedLocation> PassedLocations { get; set; } = null!;
+    private string _dataFilePath;
+
+    private string ConnectionString
     {
-        public DbSet<Trip> Trips { get; set; } = null!;
-        public DbSet<PassedLocation> PassedLocations { get; set; } = null!;
-        private string _dataFilePath;
+        get { return $"Data Source={_dataFilePath}"; }
+    }
 
-        public DataContext(string dataFilePath)
+    public DataContext(string dataFilePath)
+    {
+        _dataFilePath = dataFilePath;
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PassedLocation>(entity =>
         {
-            _dataFilePath = dataFilePath;
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            
-
-
-        }
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Time).IsRequired();
+            entity.Property(e => e.Latitude).IsRequired();
+            entity.Property(e => e.Longitude).IsRequired();
+        }); 
+    }
         
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite(ConnectionString);
-        }
-
-        private string ConnectionString
-        {
-            get { return $"Data Source={_dataFilePath}"; }
-        }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlite(ConnectionString);
     }
 }

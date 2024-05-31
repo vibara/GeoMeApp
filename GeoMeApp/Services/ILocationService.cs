@@ -1,8 +1,7 @@
-﻿namespace GeoMeApp.Services
+﻿namespace GeoMeApp.Services;
+
+public interface ILocationService
 {
-    public interface ILocationService
-    {
-        double LocationUpdateSeconds { get; set; }
-        Location? GetLocation();
-    }
+    double LocationUpdateSeconds { get; set; }
+    Location? GetLocation();
 }

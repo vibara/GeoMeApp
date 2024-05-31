@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GeoMeApp.Data
+namespace GeoMeApp.Data;
+
+public class PassedLocation
 {
-    internal class PassedLocation
-    {
-        [Key]
-        public int Id { get; set; }
-        public double Latitude {  get; set; }
-        public double Longitude { get; set; }
-        public DateTime Time { get; set; }
-    }
+    [Key]
+    public int Id { get; set; }
+    public double Latitude {  get; set; }
+    public double Longitude { get; set; }
+    public DateTime Time { get; set; }
 }

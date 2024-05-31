@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeoMeApp.Services
+namespace GeoMeApp.Services;
+
+public interface ISettingsService
 {
-    public interface ISettingsService
-    {
-        Task<T> GetValue<T>(string key, T defaultValue);
-        Task SetValue<T>(string key, T value);
-    }
+    Task<T> GetValue<T>(string key, T defaultValue);
+    Task SetValue<T>(string key, T value);
 }
