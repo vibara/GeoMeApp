@@ -9,12 +9,12 @@ namespace GeoMeApp.Views
     {
         public double ControlUpdateSeconds { get; private set; } = 10;
         private const string NoInfoAboutLocation = "...";
-        private readonly App _app = Application.Current as App;
+        private readonly App? _app = Application.Current as App;
         private readonly ILocationService? _locationService;
         private Timer? _updateTimer;
         private bool _initialCentering = true;
         private bool _polylineDrawing = false;
-        private readonly IDatabaseService _databaseService;
+        private readonly IDatabaseService? _databaseService;
 
         private Polyline _myTrack = new Polyline   // To refactor
         {
@@ -25,16 +25,16 @@ namespace GeoMeApp.Views
         public MainPage()
         {
             InitializeComponent();
-            _locationService = _app.Handler.MauiContext?.Services.GetService<ILocationService>();
-            _databaseService = _app.Handler.MauiContext?.Services.GetService<IDatabaseService>();
+            _locationService = _app?.Handler.MauiContext?.Services.GetService<ILocationService>();
+            _databaseService = _app?.Handler.MauiContext?.Services.GetService<IDatabaseService>();
+            Map.IsVisible = false;
             if (_databaseService != null ) {
                 var locations = _databaseService.GetLocations();
-
                 foreach (var location in locations )
                 {
                     _myTrack.Geopath.Add(location);
                 }
-                // ((List<Location>)_myTrack.Geopath).AddRange(locations); ? What's wrong?
+                // To refactor. ((List<Location>)_myTrack.Geopath).AddRange(locations); ? What's wrong?
             }
             StartUpdateTimer();
         }
@@ -44,7 +44,7 @@ namespace GeoMeApp.Views
             _updateTimer = new Timer(UpdateControls, null, TimeSpan.Zero, TimeSpan.FromSeconds(ControlUpdateSeconds));
         }
 
-        private void UpdateControls(object state)
+        private void UpdateControls(object? state)
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -57,6 +57,8 @@ namespace GeoMeApp.Views
                         MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(0.444));
                         Map.MoveToRegion(mapSpan);
                         _initialCentering = false;
+                        Map.IsVisible = true;
+                        Map.MapElements.Add(_myTrack);
                     }
                     if (!_initialCentering && _polylineDrawing)
                     {
@@ -65,7 +67,7 @@ namespace GeoMeApp.Views
                             _myTrack.Geopath.Last().Longitude != location.Longitude)
                         {
                             _myTrack.Geopath.Add(location);
-                            _databaseService.AddLocation(location, DateTime.Now);   
+                            _databaseService?.AddLocation(location, DateTime.Now);   
                         }
                     }
                 }
@@ -84,14 +86,7 @@ namespace GeoMeApp.Views
 
         private void Track_Toggled(object sender, ToggledEventArgs e)
         {
-            if (e.Value)
-            {
-                _polylineDrawing = true;
-            }
-            else
-            {
-                _polylineDrawing = false;
-            }
+            _polylineDrawing = e.Value;
         }
     }
 
