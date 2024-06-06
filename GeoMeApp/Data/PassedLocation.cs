@@ -9,4 +9,6 @@ public class PassedLocation
     public double Latitude {  get; set; }
     public double Longitude { get; set; }
     public DateTime Time { get; set; }
+    public int PathId { get; set; }
+    public PassedPath PassedPath { get; set; } = null!; 
 }

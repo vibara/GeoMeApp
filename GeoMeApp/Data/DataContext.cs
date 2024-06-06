@@ -25,13 +25,23 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<PassedLocation>(entity =>
+        modelBuilder.Entity<PassedLocation>(location =>
         {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Time).IsRequired();
-            entity.Property(e => e.Latitude).IsRequired();
-            entity.Property(e => e.Longitude).IsRequired();
-        }); 
+            location.HasKey(e => e.Id);
+            location.Property(e => e.Time).IsRequired();
+            location.Property(e => e.Latitude).IsRequired();
+            location.Property(e => e.Longitude).IsRequired();
+        });
+
+        modelBuilder.Entity<PassedPath>(path =>
+        {
+            path.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<PassedPath>()
+            .HasMany(e => e.PassedLocations)
+            .WithOne(e => e.PassedPath)
+            .HasForeignKey(e => e.PathId);
     }
         
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
