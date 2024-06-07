@@ -30,28 +30,52 @@ public class DatabaseService : Data.DataContext, IDatabaseService
 
     }
 
-    public void AddLocation(Location location, DateTime when)
+    public void AddLocation(PassedPath? path, Location location, DateTime when)
     {
+        if (path == null)
+        {
+            return;
+        }
         using var dataContext = GetDataContext();  
         if (dataContext != null)
         {
             var passedLocation = new PassedLocation() { 
                 Latitude = location.Latitude, 
                 Longitude = location.Longitude,  
-                Time = when
+                Time = when,
+                PassedPath = path,
+                PathId = path.Id
             };
             dataContext.PassedLocations.Add(passedLocation);
             dataContext.SaveChanges();
         }
     }
 
-    public IList<Location> GetLocations()
+    public PassedPath? AddPath()
+    {
+        using var dataContext = GetDataContext();
+        if (dataContext != null)
+        {
+            var path = dataContext.PassedPaths.Add(new PassedPath() { });
+            dataContext.SaveChanges();
+            return path.Entity;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public IList<Location> GetLocations(PassedPath path)
     {
         List<Location> locations = new List<Location>();
         using var dataContext = GetDataContext();
         if (dataContext != null)
         {
-            dataContext.PassedLocations.ToList().ForEach(location => locations.Add(new Location()
+            dataContext.PassedLocations
+                .Where(l => l.PassedPath.Id == path.Id)
+                .ToList()
+                .ForEach(location => locations.Add(new Location()
             {
                 Latitude = location.Latitude,
                 Longitude = location.Longitude
@@ -59,6 +83,17 @@ public class DatabaseService : Data.DataContext, IDatabaseService
             ));
         }
         return locations;
+    }
+
+    public IList<PassedPath> GetPaths()
+    {
+        List<PassedPath> paths = new List<PassedPath>();
+        using var dataContext = GetDataContext();
+        if (dataContext != null)
+        {
+            paths = dataContext.PassedPaths.ToList();
+        }
+        return paths;
     }
 }
 

@@ -11,7 +11,7 @@ namespace GeoMeApp
     public static class MauiProgram
     {
 
-        private const string DataFileName = "GeoMeData.db";
+        private const string DataFileName = "GeoMeData_1.db";
         public static string DataFilePath { get; private set; } = 
             Path.Combine(FileSystem.Current.AppDataDirectory, DataFileName); // example: GeoMeData "/data/user/0/com.companyname.geomeapp/files/GeoMeData.db"
 

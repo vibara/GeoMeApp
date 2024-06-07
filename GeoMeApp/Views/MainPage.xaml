@@ -13,7 +13,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <maps:Map x:Name="Map" 
                   Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
@@ -29,6 +29,6 @@
                 HorizontalOptions="Start" VerticalOptions="Center" />
         <Label x:Name="Coordinates" Text="" 
                Grid.Row="1" Grid.Column="2" 
-               HorizontalTextAlignment="Start" HorizontalOptions="Start" VerticalTextAlignment="Center"/>
+               HorizontalTextAlignment="Start" HorizontalOptions="Center" VerticalTextAlignment="Center"/>
     </Grid>
 </ContentPage>

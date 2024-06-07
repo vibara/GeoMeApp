@@ -11,6 +11,8 @@ namespace GeoMeApp.Data;
 public class DataContext : DbContext
 {
     public DbSet<PassedLocation> PassedLocations { get; set; } = null!;
+    public DbSet<PassedPath> PassedPaths { get; set; } = null!;
+
     private string _dataFilePath;
 
     private string ConnectionString

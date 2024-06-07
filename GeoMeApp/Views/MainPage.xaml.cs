@@ -2,6 +2,7 @@
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using System.Diagnostics;
+using GeoMeApp.Data;
 
 namespace GeoMeApp.Views
 {
@@ -15,27 +16,53 @@ namespace GeoMeApp.Views
         private bool _initialCentering = true;
         private bool _polylineDrawing = false;
         private readonly IDatabaseService? _databaseService;
-
-        private Polyline _myTrack = new Polyline   // To refactor
-        {
-            StrokeColor = Color.FromArgb("#FF0000"),
-            StrokeWidth = 5
-        };
+        private PassedPath? _currentPath = null;
+        private Polyline? _currentTrack = null;
 
         public MainPage()
         {
             InitializeComponent();
             _locationService = _app?.Handler.MauiContext?.Services.GetService<ILocationService>();
             _databaseService = _app?.Handler.MauiContext?.Services.GetService<IDatabaseService>();
-            if (_databaseService != null ) {
-                var locations = _databaseService.GetLocations();
-                foreach (var location in locations )
-                {
-                    _myTrack.Geopath.Add(location);
-                }
-                // To refactor. ((List<Location>)_myTrack.Geopath).AddRange(locations); ? What's wrong?
-            }
+            RestoreDataFromDatabase();
             StartUpdateTimer();
+        }
+
+        private static Polyline CreateGeopath()
+        {
+            var geopath = new Polyline()
+            {
+                StrokeColor = Color.FromArgb("#FF0000"),
+                StrokeWidth = 3
+            };
+            return geopath;
+        }
+
+        private void NewGeopath()
+        { 
+            _currentTrack = CreateGeopath();
+            if (_databaseService != null)
+            {
+                _currentPath = _databaseService.AddPath();
+            }
+        }
+
+        private void RestoreDataFromDatabase()
+        {
+            if (_databaseService != null)
+            {
+                foreach (var path in _databaseService.GetPaths())
+                {
+                    var geopath = CreateGeopath();
+                    var locations = _databaseService.GetLocations(path);
+                    foreach (var location in locations)
+                    {
+                        geopath.Add(location);
+                    }
+                    Map.MapElements.Add(geopath);
+                }
+                // To refactor. ((List<Location>)geopPath).AddRange(locations); ? What's wrong?
+            }
         }
 
         private void StartUpdateTimer()
@@ -56,16 +83,24 @@ namespace GeoMeApp.Views
                         MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(0.444));
                         Map.MoveToRegion(mapSpan);
                         _initialCentering = false;
-                        Map.MapElements.Add(_myTrack);
+                        if (_polylineDrawing)
+                        {
+                            NewGeopath();
+                        }
                     }
                     if (!_initialCentering && _polylineDrawing)
                     {
-                        if (_myTrack.Geopath.Count == 0 || 
-                            _myTrack.Geopath.Last().Latitude != location.Latitude || 
-                            _myTrack.Geopath.Last().Longitude != location.Longitude)
+                        if (_currentTrack == null)
                         {
-                            _myTrack.Geopath.Add(location);
-                            _databaseService?.AddLocation(location, DateTime.Now);   
+                            NewGeopath();
+                        }
+                        if (_currentTrack != null && (
+                            _currentTrack.Count == 0 ||
+                            _currentTrack.Last().Latitude != location.Latitude ||
+                            _currentTrack.Last().Longitude != location.Longitude))
+                        {
+                            _currentTrack.Add(location);
+                            _databaseService?.AddLocation(_currentPath, location, DateTime.Now);   
                         }
                     }
                 }
@@ -84,7 +119,16 @@ namespace GeoMeApp.Views
 
         private void Track_Toggled(object sender, ToggledEventArgs e)
         {
+            if (!_polylineDrawing && e.Value)
+            {
+                NewGeopath();
+            }
             _polylineDrawing = e.Value;
+            if (!_polylineDrawing)
+            {
+                _currentPath = null;
+                _currentTrack = null;
+            }
         }
     }
 

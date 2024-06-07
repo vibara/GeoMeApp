@@ -11,6 +11,8 @@ namespace GeoMeApp.Services;
 public interface IDatabaseService
 {
     public DataContext GetDataContext(bool initialize = false);
-    public void AddLocation(Location location, DateTime when);
-    public IList<Location> GetLocations();
+    public void AddLocation(PassedPath? path, Location location, DateTime when);
+    public PassedPath? AddPath();
+    public IList<Location> GetLocations(PassedPath path);
+    public IList<PassedPath> GetPaths();
 }
