@@ -41,6 +41,7 @@ namespace GeoMeApp.Views
         private void NewGeopath()
         { 
             _currentTrack = CreateGeopath();
+            Map.MapElements.Add(_currentTrack);
             if (_databaseService != null)
             {
                 _currentPath = _databaseService.AddPath();

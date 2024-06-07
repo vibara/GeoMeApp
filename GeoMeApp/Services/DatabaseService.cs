@@ -43,7 +43,6 @@ public class DatabaseService : Data.DataContext, IDatabaseService
                 Latitude = location.Latitude, 
                 Longitude = location.Longitude,  
                 Time = when,
-                PassedPath = path,
                 PathId = path.Id
             };
             dataContext.PassedLocations.Add(passedLocation);
