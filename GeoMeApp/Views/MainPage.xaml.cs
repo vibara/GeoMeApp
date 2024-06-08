@@ -1,7 +1,6 @@
 ﻿using GeoMeApp.Services;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
-using System.Diagnostics;
 using GeoMeApp.Data;
 
 namespace GeoMeApp.Views
@@ -17,7 +16,7 @@ namespace GeoMeApp.Views
         private bool _polylineDrawing = false;
         private readonly IDatabaseService? _databaseService;
         private PassedPath? _currentPath = null;
-        private Polyline? _currentTrack = null;
+        private IList<Location>? _currentTrack = null;
 
         public MainPage()
         {
@@ -28,7 +27,7 @@ namespace GeoMeApp.Views
             StartUpdateTimer();
         }
 
-        private static Polyline CreateGeopath()
+        private static Polyline CreateGeopathPolyline()
         {
             var geopath = new Polyline()
             {
@@ -40,12 +39,10 @@ namespace GeoMeApp.Views
 
         private void NewGeopath()
         { 
-            _currentTrack = CreateGeopath();
-            Map.MapElements.Add(_currentTrack);
-            if (_databaseService != null)
-            {
-                _currentPath = _databaseService.AddPath();
-            }
+            var polyline = CreateGeopathPolyline();
+            _currentTrack = polyline.Geopath;
+            Map.MapElements.Add(polyline);
+            _currentPath = _databaseService?.AddPath();
         }
 
         private void RestoreDataFromDatabase()
@@ -54,15 +51,14 @@ namespace GeoMeApp.Views
             {
                 foreach (var path in _databaseService.GetPaths())
                 {
-                    var geopath = CreateGeopath();
+                    var polyline = CreateGeopathPolyline();
                     var locations = _databaseService.GetLocations(path);
                     foreach (var location in locations)
                     {
-                        geopath.Add(location);
+                        polyline.Geopath.Add(location);
                     }
-                    Map.MapElements.Add(geopath);
+                    Map.MapElements.Add(polyline);
                 }
-                // To refactor. ((List<Location>)geopPath).AddRange(locations); ? What's wrong?
             }
         }
 
