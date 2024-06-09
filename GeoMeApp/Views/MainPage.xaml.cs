@@ -40,8 +40,8 @@ namespace GeoMeApp.Views
         private void NewGeopath()
         { 
             var polyline = CreateGeopathPolyline();
-            _currentTrack = polyline.Geopath;
             Map.MapElements.Add(polyline);
+            _currentTrack = polyline.Geopath;
             _currentPath = _databaseService?.AddPath();
         }
 
@@ -94,10 +94,12 @@ namespace GeoMeApp.Views
                         if (_currentTrack != null && (
                             _currentTrack.Count == 0 ||
                             _currentTrack.Last().Latitude != location.Latitude ||
-                            _currentTrack.Last().Longitude != location.Longitude))
+                            _currentTrack.Last().Longitude != location.Longitude) &&
+                            (_currentTrack.Last().Latitude != 0 && _currentTrack.Last().Longitude != 0)
+                           )
                         {
                             _currentTrack.Add(location);
-                            _databaseService?.AddLocation(_currentPath, location, DateTime.Now);   
+                            _databaseService?.AddLocation(_currentPath, location, _currentTrack.Last().Timestamp.DateTime);   
                         }
                     }
                 }
