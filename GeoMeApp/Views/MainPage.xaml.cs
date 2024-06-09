@@ -72,7 +72,7 @@ namespace GeoMeApp.Views
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 var location = _locationService?.GetLocation();
-                if (location != null)
+                if (location != null && location.Latitude != 0 && location.Longitude != 0)
                 {
                     Coordinates.Text = $"Lat: {location.Latitude:F4}  Long: {location.Longitude:F4}";
                     if (_initialCentering)
@@ -91,12 +91,13 @@ namespace GeoMeApp.Views
                         {
                             NewGeopath();
                         }
-                        if (_currentTrack != null && (
-                            _currentTrack.Count == 0 ||
-                            _currentTrack.Last().Latitude != location.Latitude ||
-                            _currentTrack.Last().Longitude != location.Longitude) &&
-                            (_currentTrack.Last().Latitude != 0 && _currentTrack.Last().Longitude != 0)
-                           )
+                        if (_currentTrack != null &&
+                            (
+                                _currentTrack.Count == 0 ||
+                                _currentTrack.Last().Latitude != location.Latitude ||
+                                _currentTrack.Last().Longitude != location.Longitude
+                            )
+                           )     
                         {
                             _currentTrack.Add(location);
                             _databaseService?.AddLocation(_currentPath, location, _currentTrack.Last().Timestamp.DateTime);   
