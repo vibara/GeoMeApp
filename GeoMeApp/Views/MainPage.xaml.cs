@@ -2,6 +2,7 @@
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using GeoMeApp.Data;
+using System.Configuration;
 
 namespace GeoMeApp.Views
 {
@@ -32,7 +33,7 @@ namespace GeoMeApp.Views
             var geopath = new Polyline()
             {
                 StrokeColor = Color.FromArgb("#FF0000"),
-                StrokeWidth = 3
+                StrokeWidth = 6
             };
             return geopath;
         }
@@ -55,7 +56,7 @@ namespace GeoMeApp.Views
                     var locations = _databaseService.GetLocations(path);
                     foreach (var location in locations)
                     {
-                        polyline.Geopath.Add(location);
+                        polyline.Add(location);
                     }
                     Map.MapElements.Add(polyline);
                 }
